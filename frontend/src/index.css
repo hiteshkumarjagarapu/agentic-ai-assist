@@ -2,9 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
-.typing-cursor::after {
+/* Typing cursor shown after the last rendered element while streaming */
+.typing-cursor > :last-child::after {
   content: '▍';
   margin-left: 1px;
   animation: blink 1s steps(2, start) infinite;
 }
 @keyframes blink { to { visibility: hidden; } }
+
+/* Markdown styling for assistant messages */
+.md > * + * { margin-top: 0.6em; }
+.md p, .md li { line-height: 1.55; }
+.md ul { list-style: disc; padding-left: 1.4em; }
+.md ol { list-style: decimal; padding-left: 1.4em; }
+.md h1, .md h2, .md h3 { font-weight: 700; }
+.md h1 { font-size: 1.25em; }
+.md h2 { font-size: 1.15em; }
+.md a { color: #2563eb; text-decoration: underline; }
+.dark .md a { color: #93c5fd; }
+.md code { font-family: ui-monospace, monospace; font-size: 0.9em; padding: 0.1em 0.35em; border-radius: 4px; background: rgba(0, 0, 0, 0.12); }
+.dark .md code { background: rgba(255, 255, 255, 0.15); }
+.md pre { padding: 0.75em; border-radius: 8px; overflow-x: auto; background: rgba(0, 0, 0, 0.15); }
+.md pre code { padding: 0; background: transparent; }
+.md blockquote { border-left: 3px solid rgba(128, 128, 128, 0.6); padding-left: 0.8em; opacity: 0.9; }
+.md table { border-collapse: collapse; display: block; overflow-x: auto; }
+.md th, .md td { border: 1px solid rgba(128, 128, 128, 0.5); padding: 0.3em 0.6em; }
+.md th { font-weight: 600; }

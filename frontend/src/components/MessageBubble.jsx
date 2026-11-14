@@ -18,7 +18,7 @@ export default function MessageBubble({ message, isLast, streaming, thinking, th
                 : 'bg-gray-200 text-gray-900 dark:bg-gray-700 dark:text-gray-100'
             }`}
           >
-            <StreamingText text={message.content} streaming={live && !isUser} />
+            <StreamingText text={message.content} streaming={live && !isUser} markdown={!isUser} />
           </div>
         )}
       </div>
