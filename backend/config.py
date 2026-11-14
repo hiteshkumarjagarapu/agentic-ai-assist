@@ -1,7 +1,8 @@
 import re
 from pathlib import Path
 
-from pydantic import field_validator
+from pydantic import field_validator, model_validator
+from sqlalchemy.engine import make_url
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 _HERE = Path(__file__).resolve().parent
@@ -25,6 +26,7 @@ class Settings(BaseSettings):
     MAX_STEPS: int = 5
     RATE_LIMIT_PER_MIN: int = 20
     CACHE_TTL: int = 1800
+    DB_HOST: str = ""  # optional host override (e.g. host.docker.internal inside Docker)
 
     @field_validator("REDIS_URL")
     @classmethod
@@ -37,6 +39,13 @@ class Settings(BaseSettings):
         if "--tls" in v and url.startswith("redis://"):
             url = "rediss://" + url[len("redis://"):]
         return url
+
+    @model_validator(mode="after")
+    def _apply_db_host(self) -> "Settings":
+        if self.DB_HOST:
+            url = make_url(self.DATABASE_URL).set(host=self.DB_HOST)
+            self.DATABASE_URL = url.render_as_string(hide_password=False)
+        return self
 
 
 settings = Settings()  # type: ignore[call-arg]

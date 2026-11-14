@@ -4,7 +4,8 @@ services:
     ports: ["8000:8000"]
     env_file: ./.env
     environment:
-      # Reach a MySQL running on the host machine; override DATABASE_URL in .env for other setups.
+      # MySQL runs on the host machine; point the URL's host at it from inside the container.
+      DB_HOST: host.docker.internal
       CORS_ORIGINS: http://localhost:3000
   frontend:
     build:
