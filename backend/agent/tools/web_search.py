@@ -6,12 +6,20 @@ except ImportError:  # pragma: no cover
     from duckduckgo_search import DDGS  # type: ignore
 
 
-def _search(query: str, max_results: int) -> str:
-    with DDGS() as ddgs:
-        results = list(ddgs.text(query, max_results=max_results))
-    if not results:
-        return "No results found."
+def _format(results: list[dict]) -> str:
     return "\n".join(f"- {r.get('title', '')}: {r.get('body', '')}" for r in results)
+
+
+def _search(query: str, max_results: int) -> str:
+    # Text search is sometimes empty for news-style queries; fall back to news search.
+    for kind in ("text", "news"):
+        try:
+            results = list(getattr(DDGS(), kind)(query, max_results=max_results))
+        except Exception:
+            continue
+        if results:
+            return _format(results)
+    return "No results found."
 
 
 async def web_search(query: str, max_results: int = 3) -> str:

@@ -29,7 +29,15 @@ async def think_node(state: AgentState) -> dict[str, Any]:
     step = state["current_step"] + 1
     # On the last allowed step, withhold tools so the model must answer.
     use_tools = step < state["max_steps"]
-    kwargs: dict[str, Any] = {"model": settings.GROQ_MODEL, "messages": state["messages"], "temperature": 0.3}
+    messages = state["messages"]
+    if not use_tools:
+        # Final step: tell the model to answer from what it has (it cannot call tools now).
+        messages = messages + [{
+            "role": "user",
+            "content": "Answer now using the information gathered so far. Do not call any tools. "
+                       "If a tool failed, say so briefly.",
+        }]
+    kwargs: dict[str, Any] = {"model": settings.GROQ_MODEL, "messages": messages, "temperature": 0.3}
     if use_tools:
         kwargs.update(tools=tool_definitions, tool_choice="auto")
     try:

@@ -1,6 +1,7 @@
 import httpx
 
-_HEADERS = {"User-Agent": "AgenticAIAssistant/1.0 (educational project)"}
+_UA = "AgenticAIAssistant/1.0 (https://github.com/agentic-ai-assistant; educational project)"
+_HEADERS = {"User-Agent": _UA, "Api-User-Agent": _UA}
 
 
 async def search_wikipedia(query: str) -> str:
@@ -16,8 +17,10 @@ async def search_wikipedia(query: str) -> str:
             resp = await client.get(
                 "https://en.wikipedia.org/api/rest_v1/page/summary/" + title.replace(" ", "_")
             )
-        if resp.status_code != 200:
+        if resp.status_code == 404:
             return "No article found"
+        if resp.status_code != 200:
+            return f"Error: Wikipedia returned HTTP {resp.status_code}"
         return (resp.json().get("extract") or "No article found")[:800]
     except Exception as e:
         return f"Error: Wikipedia lookup failed ({type(e).__name__}: {e})"

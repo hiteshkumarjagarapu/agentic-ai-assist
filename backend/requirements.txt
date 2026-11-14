@@ -12,7 +12,7 @@ httpx
 groq
 langgraph
 redis
-duckduckgo-search
+ddgs
 pytz
 pytest
 pytest-asyncio

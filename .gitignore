@@ -10,3 +10,6 @@ dist/
 *.db
 uv.out
 uv.err
+.playwright-mcp/
+fe.out
+fe.err
